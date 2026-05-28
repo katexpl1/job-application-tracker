@@ -1,0 +1,14 @@
+import type { IApplication } from ".";
+
+export type ICreateApplicationRequest = Pick<IApplication, "companyName" | "appliedRole"> &
+  Partial<Omit<IApplication, "id" | "companyName" | "appliedRole">>;
+
+export type IUpdateApplicationRequest = Partial<ICreateApplicationRequest>;
+
+export interface IUpdateApplicationDetailsRequest {
+  id: string;
+  notes?: string;
+  pros?: string;
+  cons?: string;
+  rejectionReason?: string;
+}
