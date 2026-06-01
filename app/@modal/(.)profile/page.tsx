@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { ProfileContent } from "@/app/profile/ProfileContent";
 import { Modal } from "blunt-ui";
 import { useRouter } from "next/navigation";
