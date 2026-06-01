@@ -5,10 +5,18 @@ export type ICreateApplicationRequest = Pick<IApplication, "companyName" | "appl
 
 export type IUpdateApplicationRequest = Partial<ICreateApplicationRequest>;
 
+export interface ICoverLetterRequest {
+  id: string;
+}
+
 export interface IUpdateApplicationDetailsRequest {
   id: string;
+  contactName?: string;
+  jobPostingUrl?: string;
+  comment?: string;
   notes?: string;
   pros?: string;
   cons?: string;
   rejectionReason?: string;
+  coverLetter?: string;
 }

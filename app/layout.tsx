@@ -22,8 +22,8 @@ export default function RootLayout({
   modal: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.className} h-full`}>
-      <body className="min-h-full flex flex-col overflow-hidden">
+    <html lang="en" className={spaceGrotesk.className}>
+      <body>
         <StyledComponentsRegistry>
           <Providers>
             {children}

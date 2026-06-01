@@ -10,17 +10,23 @@ const mockApplication = {
 
 const mockChain = {
   select: vi.fn().mockReturnThis(),
+  eq: vi.fn().mockReturnThis(),
   order: vi.fn().mockResolvedValue({ data: [mockApplication], error: null }),
   insert: vi.fn().mockReturnThis(),
   single: vi.fn().mockResolvedValue({ data: mockApplication, error: null }),
 };
 
-vi.mock("@/app/lib/supabase", () => ({
-  supabase: { from: vi.fn(() => mockChain) },
+vi.mock("@/app/lib/auth", () => ({
+  authenticateUser: vi.fn().mockResolvedValue({
+    user: { id: "user-1" },
+    supabase: { from: vi.fn(() => mockChain) },
+  }),
 }));
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockChain.select.mockReturnThis();
+  mockChain.eq.mockReturnThis();
   mockChain.order.mockResolvedValue({ data: [mockApplication], error: null });
   mockChain.single.mockResolvedValue({ data: mockApplication, error: null });
 });
@@ -34,10 +40,7 @@ describe("GET /api/applications", () => {
   });
 
   it("returns 500 on database error", async () => {
-    mockChain.order.mockResolvedValue({
-      data: null,
-      error: { message: "DB error" },
-    });
+    mockChain.order.mockResolvedValue({ data: null, error: { message: "DB error" } });
     const res = await GET();
     expect(res.status).toBe(500);
   });

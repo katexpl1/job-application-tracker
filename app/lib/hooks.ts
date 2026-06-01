@@ -11,7 +11,10 @@ import type {
 } from "./models/requests";
 
 class ApiError extends Error {
-  constructor(message: string, public status: number) {
+  constructor(
+    message: string,
+    public status: number,
+  ) {
     super(message);
   }
 }
@@ -20,7 +23,10 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options);
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new ApiError(body.error ?? `Request failed with status ${res.status}`, res.status);
+    throw new ApiError(
+      body.error ?? `Request failed with status ${res.status}`,
+      res.status,
+    );
   }
   return res.json();
 }
@@ -28,9 +34,9 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 const QUERY_KEY = ["applications"];
 
 export function useApplication(id: string) {
-  return useQuery<IApplicationResponse>({
+  return useQuery<IApplicationDetailsResponse>({
     queryKey: ["applications", id],
-    queryFn: () => fetchJson<IApplicationResponse>(`/api/applications/${id}`),
+    queryFn: () => fetchJson<IApplicationDetailsResponse>(`/api/applications/${id}`),
     enabled: !!id,
   });
 }
@@ -75,27 +81,12 @@ export function useUpdateApplication() {
 export function useDeleteApplication() {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string>({
-    mutationFn: async (id) => {
-      const res = await fetch(`/api/applications/${id}`, { method: "DELETE" });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(
-          body.error ?? `Request failed with status ${res.status}`,
-        );
-      }
-    },
+    mutationFn: (id) =>
+      fetchJson<void>(`/api/applications/${id}`, { method: "DELETE" }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }
 
-export function useApplicationDetails(id: string) {
-  return useQuery<IApplicationDetailsResponse>({
-    queryKey: ["applications", id, "details"],
-    queryFn: () =>
-      fetchJson<IApplicationDetailsResponse>(`/api/applications/${id}/details`),
-    enabled: !!id,
-  });
-}
 
 export function useUpdateApplicationDetails() {
   const queryClient = useQueryClient();
@@ -115,7 +106,8 @@ export function useUpdateApplicationDetails() {
       ),
     onSuccess: (_data, { id }) =>
       queryClient.invalidateQueries({
-        queryKey: ["applications", id, "details"],
+        queryKey: ["applications", id],
       }),
   });
 }
+

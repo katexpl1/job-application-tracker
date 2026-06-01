@@ -9,19 +9,32 @@ const Login = () => {
   const router = useRouter();
   const [login, setLogin] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: login,
-      password,
-    });
+  const signIn = async (email: string, pass: string) => {
+    setIsLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    setIsLoading(false);
     if (error) {
-      toast.error(`Logic action failed. ${error.message}`);
+      toast.error(`Login action failed. ${error.message}`);
     } else {
       router.push("/");
       router.refresh();
     }
   };
+
+  const handleLogin = () => signIn(login, password);
+
+  const handleDemoLogin = () => {
+    const email = process.env.NEXT_PUBLIC_DEMO_EMAIL;
+    const pass = process.env.NEXT_PUBLIC_DEMO_PASSWORD;
+    if (!email || !pass) {
+      toast.error("Demo account not configured.");
+      return;
+    }
+    signIn(email, pass);
+  };
+
   return (
     <div
       style={{
@@ -50,7 +63,10 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <Button type="submit">Log in</Button>
+        <Button type="submit" isLoading={isLoading}>Log in</Button>
+        <Button type="button" variant="secondary" onClick={handleDemoLogin} isLoading={isLoading}>
+          Try demo
+        </Button>
       </Form>
     </div>
   );

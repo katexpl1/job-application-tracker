@@ -1,5 +1,5 @@
 import { errorResponse, HttpStatus } from "@/app/api/utils";
-import type { IApplicationResponse } from "@/app/lib/models/responses";
+import type { IApplicationDetailsResponse, IApplicationResponse } from "@/app/lib/models/responses";
 import type { IUpdateApplicationRequest } from "@/app/lib/models/requests";
 import type { NextRequest } from "next/server";
 import { authenticateUser } from "@/app/lib/auth";
@@ -15,7 +15,7 @@ export async function GET(
   }
 
   const { id } = await params;
-  const { data, error } = await supabase
+  const { data: application, error } = await supabase
     .from("applications")
     .select("*")
     .eq("id", id)
@@ -30,7 +30,14 @@ export async function GET(
 
     return errorResponse(error.message, status);
   }
-  return Response.json(data as IApplicationResponse);
+
+  const { data: details } = await supabase
+    .from("application_details")
+    .select("*")
+    .eq("applicationId", id)
+    .maybeSingle();
+
+  return Response.json({ ...application, ...details } as IApplicationDetailsResponse);
 }
 
 export async function PUT(
@@ -54,10 +61,7 @@ export async function PUT(
     dateApplied,
     source,
     salaryRange,
-    contactName,
-    jobPostingUrl,
     status,
-    comment,
   } = body;
 
   const { data, error } = await supabase
@@ -70,10 +74,7 @@ export async function PUT(
       dateApplied,
       source,
       salaryRange,
-      contactName,
-      jobPostingUrl,
       status,
-      comment,
     })
     .eq("id", id)
     .eq("userId", user.id)

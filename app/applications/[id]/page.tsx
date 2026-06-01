@@ -1,6 +1,6 @@
 "use client";
 
-import { ApplicationDetailsContent } from "@/app/components/ApplicationDetailsContent";
+import { ApplicationDetailsContent } from "./ApplicationDetailsContent";
 import { use } from "react";
 import * as Styled from "./page.styles";
 

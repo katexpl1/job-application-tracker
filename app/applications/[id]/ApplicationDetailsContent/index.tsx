@@ -1,0 +1,1 @@
+export { ApplicationDetailsContent } from "./ApplicationDetailsContent";

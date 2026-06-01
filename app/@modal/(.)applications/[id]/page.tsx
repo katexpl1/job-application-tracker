@@ -1,6 +1,6 @@
 "use client";
 
-import { ApplicationDetailsContent } from "@/app/components/ApplicationDetailsContent";
+import { ApplicationDetailsContent } from "@/app/applications/[id]/ApplicationDetailsContent";
 import { Modal } from "blunt-ui";
 import { useRouter } from "next/navigation";
 import { use } from "react";
@@ -17,7 +17,7 @@ export default function ApplicationModal({
     <Modal
       open
       onClose={() => router.back()}
-      size="md"
+      size="lg"
       title="Application details"
     >
       <ApplicationDetailsContent id={id} />

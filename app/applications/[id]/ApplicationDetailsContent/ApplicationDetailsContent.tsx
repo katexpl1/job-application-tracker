@@ -2,11 +2,15 @@
 
 import {
   useApplication,
-  useApplicationDetails,
   useUpdateApplication,
   useUpdateApplicationDetails,
 } from "@/app/lib/hooks";
-import { JOB_TYPE_OPTIONS, SOURCE_OPTIONS, STATUS_OPTIONS } from "@/app/consts";
+import { useGenerateCoverLetter } from "./ApplicationDetailsContent.hooks";
+import {
+  JOB_TYPE_OPTIONS,
+  SOURCE_OPTIONS,
+  STATUS_OPTIONS,
+} from "./ApplicationDetailsContent.consts";
 import {
   Button,
   Form,
@@ -21,14 +25,18 @@ import {
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import * as Styled from "./ApplicationDetailsContent.styles";
-import { mapToApplicationFormValues, validateApplication } from "./helpers";
-import type { CombinedForm } from "./types";
+import {
+  mapToApplicationFormValues,
+  validateApplication,
+} from "./ApplicationDetailsContent.helpers";
+import { EMPTY_FORM } from "./ApplicationDetailsContent.types";
+import type { CombinedForm } from "./ApplicationDetailsContent.types";
 
-interface Props {
+interface IProps {
   id: string;
 }
 
-export function ApplicationDetailsContent({ id }: Props) {
+export function ApplicationDetailsContent({ id }: IProps) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -38,9 +46,24 @@ export function ApplicationDetailsContent({ id }: Props) {
     isError: appError,
   } = useApplication(id);
 
-  const { data: details } = useApplicationDetails(id);
-  const { mutate: updateApplication } = useUpdateApplication();
-  const { mutate: updateDetails } = useUpdateApplicationDetails();
+  const { mutateAsync: updateApplication } = useUpdateApplication();
+  const { mutateAsync: updateDetails } = useUpdateApplicationDetails();
+
+  const { coverLetter, setCoverLetter, isGenerating: isCoverLetterGenerating, generate: handleCreateCoverLetter } = useGenerateCoverLetter(id);
+
+  const handleFormSubmit = async (vals: CombinedForm) => {
+    const { notes, pros, cons, rejectionReason, contactName, jobPostingUrl, comment, ...appFields } = vals;
+    try {
+      await Promise.all([
+        updateApplication({ id, body: appFields }),
+        updateDetails({ id, contactName, jobPostingUrl, comment, notes, pros, cons, rejectionReason, coverLetter }),
+      ]);
+      toast.success("Saved!");
+    } catch (err) {
+      toast.error(`Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`);
+      throw err;
+    }
+  };
 
   const {
     values,
@@ -54,54 +77,8 @@ export function ApplicationDetailsContent({ id }: Props) {
   } = useForm<CombinedForm>({
     validate: validateApplication,
     onError: () => toast.error("Please verify the form fields"),
-    initialValues: {
-      companyName: "",
-      appliedRole: "",
-      location: "",
-      jobType: "",
-      dateApplied: "",
-      source: "",
-      salaryRange: "",
-      contactName: "",
-      jobPostingUrl: "",
-      status: "",
-      comment: "",
-      notes: "",
-      pros: "",
-      cons: "",
-      rejectionReason: "",
-    },
-    onSubmit: async (vals) => {
-      const { notes, pros, cons, rejectionReason, ...appFields } = vals;
-      try {
-        await Promise.all([
-          new Promise<void>((resolve, reject) =>
-            updateApplication(
-              { id, body: appFields },
-              {
-                onSuccess: () => resolve(),
-                onError: (err) => reject(err),
-              },
-            ),
-          ),
-          new Promise<void>((resolve, reject) =>
-            updateDetails(
-              { id, notes, pros, cons, rejectionReason },
-              {
-                onSuccess: () => resolve(),
-                onError: (err) => reject(err),
-              },
-            ),
-          ),
-        ]);
-        toast.success("Saved!");
-      } catch (err) {
-        toast.error(
-          `Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`,
-        );
-        throw err;
-      }
-    },
+    initialValues: EMPTY_FORM,
+    onSubmit: handleFormSubmit,
   });
 
   useEffect(() => {
@@ -109,8 +86,9 @@ export function ApplicationDetailsContent({ id }: Props) {
       return;
     }
 
-    reset(mapToApplicationFormValues(application, details));
-  }, [application, details, reset]);
+    reset(mapToApplicationFormValues(application));
+    setCoverLetter(application.coverLetter ?? "");
+  }, [application]);
 
   useEffect(() => {
     if (appError) {
@@ -248,6 +226,25 @@ export function ApplicationDetailsContent({ id }: Props) {
               onBlur={handleBlur}
             />
           )}
+
+          <Styled.FullWidth>
+            <Textarea
+              name="coverLetter"
+              label="Cover letter"
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+            />
+          </Styled.FullWidth>
+          <Button
+            type="button"
+            onClick={handleCreateCoverLetter}
+            variant="secondary"
+            size="sm"
+            isLoading={isCoverLetterGenerating}
+            style={{ marginTop: -16 }}
+          >
+            Generate AI Cover letter
+          </Button>
         </Styled.InputsContainer>
 
         <Button type="submit" variant="primary" isLoading={isSubmitting}>

@@ -1,17 +1,18 @@
-import type { IApplication, IApplicationDetails } from "@/app/lib/models";
-import type { CombinedForm } from "./types";
+import type { IApplicationDetailsResponse } from "@/app/lib/models/responses";
+import type { CombinedForm } from "./ApplicationDetailsContent.types";
 
 export function mapToApplicationFormValues(
-  application: IApplication,
-  details?: IApplicationDetails,
+  data: IApplicationDetailsResponse,
 ): CombinedForm {
   return {
-    ...application,
-    ...(details ?? {}),
-    notes: details?.notes ?? "",
-    pros: details?.pros ?? "",
-    cons: details?.cons ?? "",
-    rejectionReason: details?.rejectionReason ?? "",
+    ...data,
+    contactName: data.contactName ?? "",
+    jobPostingUrl: data.jobPostingUrl ?? "",
+    comment: data.comment ?? "",
+    notes: data.notes ?? "",
+    pros: data.pros ?? "",
+    cons: data.cons ?? "",
+    rejectionReason: data.rejectionReason ?? "",
   };
 }
 

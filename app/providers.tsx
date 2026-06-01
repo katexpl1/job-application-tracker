@@ -9,7 +9,6 @@ import {
   createNeoBrutalTheme,
 } from "blunt-ui";
 import { useState } from "react";
-import { HttpStatus } from "./api/utils";
 
 const theme = createNeoBrutalTheme("#4f46e5");
 
@@ -23,8 +22,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               !(
                 error instanceof Error &&
                 "status" in error &&
-                (error as { status: number }).status <
-                  HttpStatus.InternalServerError
+                (error as { status: number }).status < 500
               ),
           },
         },

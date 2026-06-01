@@ -4,49 +4,6 @@ import type { IUpdateApplicationDetailsRequest } from "@/app/lib/models/requests
 import type { NextRequest } from "next/server";
 import { authenticateUser } from "@/app/lib/auth";
 
-const emptyDetails = {
-  notes: "",
-  pros: "",
-  cons: "",
-  rejectionReason: "",
-};
-
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  const { user, supabase } = await authenticateUser();
-
-  if (!user) {
-    return errorResponse("Unauthorized", HttpStatus.Unauthorized);
-  }
-
-  const { id } = await params;
-
-  const { error: ownershipError } = await supabase
-    .from("applications")
-    .select("id")
-    .eq("id", id)
-    .eq("userId", user.id)
-    .single();
-
-  if (ownershipError) {
-    return errorResponse("Not found", HttpStatus.NotFound);
-  }
-
-  const { data, error } = await supabase
-    .from("application_details")
-    .select("*")
-    .eq("applicationId", id)
-    .maybeSingle();
-
-  if (error) {
-    return errorResponse(error.message, HttpStatus.InternalServerError);
-  }
-
-  return Response.json((data ?? emptyDetails) as IApplicationDetailsResponse);
-}
-
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

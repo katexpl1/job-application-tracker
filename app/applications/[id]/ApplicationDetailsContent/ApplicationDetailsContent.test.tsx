@@ -3,8 +3,13 @@ import { http, HttpResponse } from "msw";
 import { describe, expect, it, vi } from "vitest";
 import { mockApplication } from "@/app/mocks/handlers";
 import { server } from "@/app/mocks/server";
-import { renderWithProviders } from "@/app/test-utils";
+import { renderWithProviders } from "@/app/mocks/test-utils";
 import { ApplicationDetailsContent } from ".";
+
+const mockReplace = vi.fn();
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(() => ({ replace: mockReplace })),
+}));
 
 vi.mock("blunt-ui", () => ({
   Button: ({
@@ -154,7 +159,7 @@ describe("ApplicationDetailsContent", () => {
     });
   });
 
-  it("shows error state when application fails to load", async () => {
+  it("redirects to home when application fails to load", async () => {
     server.use(
       http.get("/api/applications/:id", () => {
         return HttpResponse.json({ error: "Not found" }, { status: 404 });
@@ -162,9 +167,7 @@ describe("ApplicationDetailsContent", () => {
     );
     renderWithProviders(<ApplicationDetailsContent id="1" />);
     await waitFor(() => {
-      expect(
-        screen.getByText("Failed to load application."),
-      ).toBeInTheDocument();
+      expect(mockReplace).toHaveBeenCalledWith("/");
     });
   });
 

@@ -49,10 +49,7 @@ export async function POST(request: NextRequest) {
     dateApplied,
     source,
     salaryRange,
-    contactName,
-    jobPostingUrl,
     status,
-    comment,
   } = body;
 
   const { data, error } = await supabase
@@ -65,10 +62,7 @@ export async function POST(request: NextRequest) {
       dateApplied,
       source,
       salaryRange,
-      contactName,
-      jobPostingUrl,
       status,
-      comment,
       userId: user.id,
     })
     .select()

@@ -8,18 +8,19 @@ export interface IApplication {
   dateApplied: string;
   source: string;
   salaryRange: string;
-  contactName: string;
-  jobPostingUrl: string;
   status: string;
-  comment: string;
 }
 
 export interface IApplicationDetails {
   applicationId: string;
+  contactName: string;
+  jobPostingUrl: string;
+  comment: string;
   notes: string;
   pros: string;
   cons: string;
   rejectionReason: string;
+  coverLetter: string;
   createdAt: string;
 }
 

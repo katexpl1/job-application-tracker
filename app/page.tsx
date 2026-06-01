@@ -70,7 +70,7 @@ export default function Home() {
       return;
     }
 
-    toast.success("Logout successfull");
+    toast.success("Logout successful");
 
     router.push("/login");
     router.refresh();
