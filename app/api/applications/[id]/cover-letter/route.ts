@@ -34,13 +34,19 @@ export async function GET(
     .eq("applicationId", id)
     .maybeSingle();
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("userId", user.id)
+    .maybeSingle();
+
   const anthropicStream = client.messages.stream({
     model: "claude-haiku-4-5",
     max_tokens: 1024,
     messages: [
       {
         role: "user",
-        content: buildCoverLetterPrompt(application, details ?? undefined),
+        content: buildCoverLetterPrompt(application, details ?? undefined, profile ?? undefined),
       },
     ],
   });

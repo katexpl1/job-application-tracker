@@ -1,13 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { HttpStatus } from "@/app/api/utils";
 import type {
   IApplicationDetailsResponse,
   IApplicationResponse,
   IApplicationsResponse,
+  IProfileResponse,
 } from "./models/responses";
 import type {
   ICreateApplicationRequest,
   IUpdateApplicationDetailsRequest,
   IUpdateApplicationRequest,
+  IUpdateProfileRequest,
 } from "./models/requests";
 
 class ApiError extends Error {
@@ -27,6 +30,9 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
       body.error ?? `Request failed with status ${res.status}`,
       res.status,
     );
+  }
+  if (res.status === HttpStatus.NoContent) {
+    return undefined as T;
   }
   return res.json();
 }
@@ -108,6 +114,26 @@ export function useUpdateApplicationDetails() {
       queryClient.invalidateQueries({
         queryKey: ["applications", id],
       }),
+  });
+}
+
+export function useProfile() {
+  return useQuery<IProfileResponse>({
+    queryKey: ["profile"],
+    queryFn: () => fetchJson<IProfileResponse>("/api/profile"),
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation<IProfileResponse, Error, IUpdateProfileRequest>({
+    mutationFn: (body) =>
+      fetchJson<IProfileResponse>("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }),
   });
 }
 

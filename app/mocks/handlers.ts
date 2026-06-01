@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { HttpStatus } from "@/app/api/utils";
 
 export const mockApplication = {
   id: "1",
@@ -35,7 +36,7 @@ export const handlers = [
 
   http.post("/api/applications", async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({ body, id: "new-id" }, { status: 201 });
+    return HttpResponse.json({ body, id: "new-id" }, { status: HttpStatus.Created });
   }),
 
   http.put("/api/applications/:id", async ({ params, request }) => {
@@ -44,7 +45,7 @@ export const handlers = [
   }),
 
   http.delete("/api/applications/:id", () => {
-    return new HttpResponse(null, { status: 204 });
+    return new HttpResponse(null, { status: HttpStatus.NoContent });
   }),
 
   http.get("/api/applications/:id/details", () => {

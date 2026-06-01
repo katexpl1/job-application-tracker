@@ -13,7 +13,10 @@ const Login = () => {
 
   const signIn = async (email: string, pass: string) => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: pass,
+    });
     setIsLoading(false);
     if (error) {
       toast.error(`Login action failed. ${error.message}`);
@@ -28,6 +31,7 @@ const Login = () => {
   const handleDemoLogin = () => {
     const email = process.env.NEXT_PUBLIC_DEMO_EMAIL;
     const pass = process.env.NEXT_PUBLIC_DEMO_PASSWORD;
+
     if (!email || !pass) {
       toast.error("Demo account not configured.");
       return;
@@ -63,8 +67,15 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <Button type="submit" isLoading={isLoading}>Log in</Button>
-        <Button type="button" variant="secondary" onClick={handleDemoLogin} isLoading={isLoading}>
+        <Button type="submit" isLoading={isLoading}>
+          Log in
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleDemoLogin}
+          isLoading={isLoading}
+        >
           Try demo
         </Button>
       </Form>

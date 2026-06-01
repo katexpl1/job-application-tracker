@@ -1,3 +1,4 @@
+import { HttpStatus } from "@/app/api/utils";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
@@ -71,7 +72,7 @@ describe("GET /api/applications/[id]/cover-letter", () => {
 
     const req = new NextRequest("http://localhost/api/applications/1/cover-letter");
     const res = await GET(req, { params });
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(HttpStatus.Unauthorized);
   });
 
   it("returns 404 when application not found", async () => {
@@ -82,14 +83,14 @@ describe("GET /api/applications/[id]/cover-letter", () => {
 
     const req = new NextRequest("http://localhost/api/applications/1/cover-letter");
     const res = await GET(req, { params });
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HttpStatus.NotFound);
   });
 
   it("returns a streaming text response on success", async () => {
     const req = new NextRequest("http://localhost/api/applications/1/cover-letter");
     const res = await GET(req, { params });
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HttpStatus.OK);
     expect(res.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
     expect(res.body).not.toBeNull();
   });

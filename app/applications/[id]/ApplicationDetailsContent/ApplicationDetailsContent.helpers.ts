@@ -1,11 +1,18 @@
 import type { IApplicationDetailsResponse } from "@/app/lib/models/responses";
-import type { CombinedForm } from "./ApplicationDetailsContent.types";
+import type { ApplicationForm } from "./ApplicationDetailsContent.types";
 
 export function mapToApplicationFormValues(
   data: IApplicationDetailsResponse,
-): CombinedForm {
+): ApplicationForm {
   return {
-    ...data,
+    companyName: data.companyName ?? "",
+    appliedRole: data.appliedRole ?? "",
+    location: data.location ?? "",
+    jobType: data.jobType ?? "",
+    dateApplied: data.dateApplied ?? "",
+    source: data.source ?? "",
+    salaryRange: data.salaryRange ?? "",
+    status: data.status ?? "",
     contactName: data.contactName ?? "",
     jobPostingUrl: data.jobPostingUrl ?? "",
     comment: data.comment ?? "",
@@ -17,9 +24,9 @@ export function mapToApplicationFormValues(
 }
 
 export function validateApplication(
-  vals: CombinedForm,
-): Partial<Record<keyof CombinedForm, string>> {
-  const errs: Partial<Record<keyof CombinedForm, string>> = {};
+  vals: ApplicationForm,
+): Partial<Record<keyof ApplicationForm, string>> {
+  const errs: Partial<Record<keyof ApplicationForm, string>> = {};
   if (!vals.companyName.trim()) {
     errs.companyName = "Company is required";
   }

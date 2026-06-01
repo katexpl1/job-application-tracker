@@ -1,4 +1,4 @@
-import type { IApplication, IApplicationDetails } from ".";
+import type { IApplication, IApplicationDetails, IProfile } from ".";
 
 export type IApplicationResponse = IApplication;
 
@@ -9,3 +9,5 @@ export type IApplicationDetailsResponse = IApplication & IApplicationDetails;
 export interface ICoverLetterResponse {
   coverLetter: string;
 }
+
+export type IProfileResponse = IProfile;

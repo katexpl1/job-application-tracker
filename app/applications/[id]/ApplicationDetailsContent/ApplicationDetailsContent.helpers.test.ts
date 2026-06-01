@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { mapToApplicationFormValues, validateApplication } from "./ApplicationDetailsContent.helpers";
+import {
+  mapToApplicationFormValues,
+  validateApplication,
+} from "./ApplicationDetailsContent.helpers";
 import type { IApplicationDetailsResponse } from "@/app/lib/models/responses";
-import { EMPTY_FORM } from "./ApplicationDetailsContent.types";
+import { EMPTY_APPLICATION_FORM } from "./ApplicationDetailsContent.types";
 
 const mockResponse: IApplicationDetailsResponse = {
   id: "1",
@@ -64,7 +67,7 @@ describe("mapToApplicationFormValues", () => {
 describe("validateApplication", () => {
   it("returns no errors for a valid form", () => {
     const errors = validateApplication({
-      ...EMPTY_FORM,
+      ...EMPTY_APPLICATION_FORM,
       companyName: "Test Corp",
       appliedRole: "Developer",
     });
@@ -73,23 +76,33 @@ describe("validateApplication", () => {
   });
 
   it("returns error when companyName is empty", () => {
-    const errors = validateApplication({ ...EMPTY_FORM, appliedRole: "Developer" });
+    const errors = validateApplication({
+      ...EMPTY_APPLICATION_FORM,
+      appliedRole: "Developer",
+    });
     expect(errors.companyName).toBe("Company is required");
   });
 
   it("returns error when companyName is whitespace only", () => {
-    const errors = validateApplication({ ...EMPTY_FORM, companyName: "   ", appliedRole: "Developer" });
+    const errors = validateApplication({
+      ...EMPTY_APPLICATION_FORM,
+      companyName: "   ",
+      appliedRole: "Developer",
+    });
     expect(errors.companyName).toBe("Company is required");
   });
 
   it("returns error when appliedRole is empty", () => {
-    const errors = validateApplication({ ...EMPTY_FORM, companyName: "Test Corp" });
+    const errors = validateApplication({
+      ...EMPTY_APPLICATION_FORM,
+      companyName: "Test Corp",
+    });
     expect(errors.appliedRole).toBe("Role is required");
   });
 
   it("returns error for invalid job posting URL", () => {
     const errors = validateApplication({
-      ...EMPTY_FORM,
+      ...EMPTY_APPLICATION_FORM,
       companyName: "Test Corp",
       appliedRole: "Developer",
       jobPostingUrl: "not-a-url",
@@ -99,7 +112,7 @@ describe("validateApplication", () => {
 
   it("returns no URL error when jobPostingUrl is empty", () => {
     const errors = validateApplication({
-      ...EMPTY_FORM,
+      ...EMPTY_APPLICATION_FORM,
       companyName: "Test Corp",
       appliedRole: "Developer",
       jobPostingUrl: "",
@@ -109,7 +122,7 @@ describe("validateApplication", () => {
 
   it("returns no URL error for a valid URL", () => {
     const errors = validateApplication({
-      ...EMPTY_FORM,
+      ...EMPTY_APPLICATION_FORM,
       companyName: "Test Corp",
       appliedRole: "Developer",
       jobPostingUrl: "https://example.com/job",

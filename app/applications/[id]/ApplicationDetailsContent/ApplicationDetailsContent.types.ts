@@ -1,23 +1,26 @@
-const COMBINED_FORM_KEYS = [
-  "companyName",
-  "appliedRole",
-  "location",
-  "jobType",
-  "dateApplied",
-  "source",
-  "salaryRange",
-  "contactName",
-  "jobPostingUrl",
-  "status",
-  "comment",
-  "notes",
-  "pros",
-  "cons",
-  "rejectionReason",
-] as const;
+import type { IApplicationDetailsResponse } from "@/app/lib/models/responses";
 
-export type CombinedForm = Record<(typeof COMBINED_FORM_KEYS)[number], string>;
+type FormFields = Omit<
+  IApplicationDetailsResponse,
+  "id" | "userId" | "applicationId" | "createdAt" | "coverLetter"
+>;
 
-export const EMPTY_FORM: CombinedForm = Object.fromEntries(
-  COMBINED_FORM_KEYS.map((key) => [key, ""]),
-) as CombinedForm;
+export const EMPTY_APPLICATION_FORM = {
+  companyName: "",
+  appliedRole: "",
+  location: "",
+  jobType: "",
+  dateApplied: "",
+  source: "",
+  salaryRange: "",
+  status: "",
+  contactName: "",
+  jobPostingUrl: "",
+  comment: "",
+  notes: "",
+  pros: "",
+  cons: "",
+  rejectionReason: "",
+} satisfies Record<keyof FormFields, string>;
+
+export type ApplicationForm = typeof EMPTY_APPLICATION_FORM;

@@ -1,3 +1,4 @@
+import { HttpStatus } from "@/app/api/utils";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET, POST } from "./route";
@@ -34,7 +35,7 @@ beforeEach(() => {
 describe("GET /api/applications", () => {
   it("returns list of applications", async () => {
     const res = await GET();
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HttpStatus.OK);
     const body = await res.json();
     expect(body).toEqual([mockApplication]);
   });
@@ -42,7 +43,7 @@ describe("GET /api/applications", () => {
   it("returns 500 on database error", async () => {
     mockChain.order.mockResolvedValue({ data: null, error: { message: "DB error" } });
     const res = await GET();
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HttpStatus.InternalServerError);
   });
 });
 
@@ -54,7 +55,7 @@ describe("POST /api/applications", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await POST(req);
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(HttpStatus.Created);
   });
 
   it("returns 400 when companyName is missing", async () => {
@@ -64,7 +65,7 @@ describe("POST /api/applications", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await POST(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HttpStatus.BadRequest);
     const body = await res.json();
     expect(body.error).toBe("Company name is required");
   });
@@ -76,7 +77,7 @@ describe("POST /api/applications", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await POST(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HttpStatus.BadRequest);
     const body = await res.json();
     expect(body.error).toBe("Role is required");
   });

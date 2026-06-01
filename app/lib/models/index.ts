@@ -25,3 +25,17 @@ export interface IApplicationDetails {
 }
 
 export type Row = Omit<IApplication, "id"> & { id?: string; details?: never };
+
+export interface IProfile {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  yearsOfExperience: string;
+  location: string;
+  bio: string;
+  skills: string;
+  linkedIn: string;
+  github: string;
+  portfolioUrl: string;
+}

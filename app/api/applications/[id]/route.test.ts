@@ -1,3 +1,4 @@
+import { HttpStatus } from "@/app/api/utils";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE, GET, PUT } from "./route";
@@ -40,7 +41,7 @@ describe("GET /api/applications/[id]", () => {
   it("returns the application with details merged", async () => {
     const req = new NextRequest("http://localhost/api/applications/1");
     const res = await GET(req, { params });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HttpStatus.OK);
     const body = await res.json();
     expect(body.companyName).toBe("Test Corp");
   });
@@ -52,7 +53,7 @@ describe("GET /api/applications/[id]", () => {
     });
     const req = new NextRequest("http://localhost/api/applications/1");
     const res = await GET(req, { params });
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HttpStatus.NotFound);
   });
 });
 
@@ -66,7 +67,7 @@ describe("PUT /api/applications/[id]", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await PUT(req, { params });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HttpStatus.OK);
     const body = await res.json();
     expect(body.companyName).toBe("Updated Corp");
   });
@@ -79,7 +80,7 @@ describe("PUT /api/applications/[id]", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await PUT(req, { params });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HttpStatus.InternalServerError);
   });
 });
 
@@ -90,7 +91,7 @@ describe("DELETE /api/applications/[id]", () => {
       .mockResolvedValueOnce({ error: null });
     const req = new NextRequest("http://localhost/api/applications/1", { method: "DELETE" });
     const res = await DELETE(req, { params });
-    expect(res.status).toBe(204);
+    expect(res.status).toBe(HttpStatus.NoContent);
   });
 
   it("returns 500 on database error", async () => {
@@ -99,6 +100,6 @@ describe("DELETE /api/applications/[id]", () => {
       .mockResolvedValueOnce({ error: { message: "DB error" } });
     const req = new NextRequest("http://localhost/api/applications/1", { method: "DELETE" });
     const res = await DELETE(req, { params });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HttpStatus.InternalServerError);
   });
 });

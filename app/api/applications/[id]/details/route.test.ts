@@ -1,3 +1,4 @@
+import { HttpStatus } from "@/app/api/utils";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PUT } from "./route";
@@ -48,7 +49,7 @@ describe("PUT /api/applications/[id]/details", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await PUT(req, { params });
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(HttpStatus.Unauthorized);
   });
 
   it("returns 404 when application does not belong to user", async () => {
@@ -64,7 +65,7 @@ describe("PUT /api/applications/[id]/details", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await PUT(req, { params });
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HttpStatus.NotFound);
   });
 
   it("upserts and returns details on success", async () => {
@@ -74,7 +75,7 @@ describe("PUT /api/applications/[id]/details", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await PUT(req, { params });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HttpStatus.OK);
     const body = await res.json();
     expect(body).toEqual(mockDetails);
   });
@@ -91,6 +92,6 @@ describe("PUT /api/applications/[id]/details", () => {
       headers: { "Content-Type": "application/json" },
     });
     const res = await PUT(req, { params });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HttpStatus.InternalServerError);
   });
 });

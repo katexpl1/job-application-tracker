@@ -29,8 +29,8 @@ import {
   mapToApplicationFormValues,
   validateApplication,
 } from "./ApplicationDetailsContent.helpers";
-import { EMPTY_FORM } from "./ApplicationDetailsContent.types";
-import type { CombinedForm } from "./ApplicationDetailsContent.types";
+import { EMPTY_APPLICATION_FORM } from "./ApplicationDetailsContent.types";
+import type { ApplicationForm } from "./ApplicationDetailsContent.types";
 
 interface IProps {
   id: string;
@@ -49,18 +49,44 @@ export function ApplicationDetailsContent({ id }: IProps) {
   const { mutateAsync: updateApplication } = useUpdateApplication();
   const { mutateAsync: updateDetails } = useUpdateApplicationDetails();
 
-  const { coverLetter, setCoverLetter, isGenerating: isCoverLetterGenerating, generate: handleCreateCoverLetter } = useGenerateCoverLetter(id);
+  const {
+    coverLetter,
+    setCoverLetter,
+    isGenerating: isCoverLetterGenerating,
+    generate: handleCreateCoverLetter,
+  } = useGenerateCoverLetter(id);
 
-  const handleFormSubmit = async (vals: CombinedForm) => {
-    const { notes, pros, cons, rejectionReason, contactName, jobPostingUrl, comment, ...appFields } = vals;
+  const handleFormSubmit = async (vals: ApplicationForm) => {
+    const {
+      notes,
+      pros,
+      cons,
+      rejectionReason,
+      contactName,
+      jobPostingUrl,
+      comment,
+      ...appFields
+    } = vals;
     try {
       await Promise.all([
         updateApplication({ id, body: appFields }),
-        updateDetails({ id, contactName, jobPostingUrl, comment, notes, pros, cons, rejectionReason, coverLetter }),
+        updateDetails({
+          id,
+          contactName,
+          jobPostingUrl,
+          comment,
+          notes,
+          pros,
+          cons,
+          rejectionReason,
+          coverLetter,
+        }),
       ]);
       toast.success("Saved!");
     } catch (err) {
-      toast.error(`Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`);
+      toast.error(
+        `Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
       throw err;
     }
   };
@@ -74,10 +100,10 @@ export function ApplicationDetailsContent({ id }: IProps) {
     handleSubmit,
     reset,
     isSubmitting,
-  } = useForm<CombinedForm>({
+  } = useForm<ApplicationForm>({
     validate: validateApplication,
     onError: () => toast.error("Please verify the form fields"),
-    initialValues: EMPTY_FORM,
+    initialValues: EMPTY_APPLICATION_FORM,
     onSubmit: handleFormSubmit,
   });
 
