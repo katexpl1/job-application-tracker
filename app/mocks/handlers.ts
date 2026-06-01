@@ -35,12 +35,12 @@ export const handlers = [
 
   http.post("/api/applications", async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({ ...body, id: "new-id" }, { status: 201 });
+    return HttpResponse.json({ body, id: "new-id" }, { status: 201 });
   }),
 
   http.put("/api/applications/:id", async ({ params, request }) => {
     const body = await request.json();
-    return HttpResponse.json({ ...mockApplication, ...body, id: params.id });
+    return HttpResponse.json({ ...mockApplication, body, id: params.id });
   }),
 
   http.delete("/api/applications/:id", () => {
@@ -53,6 +53,6 @@ export const handlers = [
 
   http.put("/api/applications/:id/details", async ({ request }) => {
     const body = await request.json();
-    return HttpResponse.json({ ...mockDetails, ...body });
+    return HttpResponse.json({ ...mockDetails, body });
   }),
 ];

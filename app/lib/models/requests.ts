@@ -1,7 +1,7 @@
 import type { IApplication } from ".";
 
 export type ICreateApplicationRequest = Pick<IApplication, "companyName" | "appliedRole"> &
-  Partial<Omit<IApplication, "id" | "companyName" | "appliedRole">>;
+  Partial<Omit<IApplication, "id" | "userId" | "companyName" | "appliedRole">>;
 
 export type IUpdateApplicationRequest = Partial<ICreateApplicationRequest>;
 

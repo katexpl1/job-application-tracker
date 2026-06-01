@@ -1,14 +1,21 @@
 "use client";
 
-import { Button, Table, TableColumn, useConfirm } from "blunt-ui";
+import { Button, Table, TableColumn, useConfirm, useToast } from "blunt-ui";
 import { useRouter } from "next/navigation";
-import { useApplications, useCreateApplication, useDeleteApplication } from "./lib/hooks";
+import {
+  useApplications,
+  useCreateApplication,
+  useDeleteApplication,
+} from "./lib/hooks";
 import { Row } from "./lib/models";
 import * as Styled from "./page.styles";
+import { supabase } from "./lib/supabase";
 
 export default function Home() {
   const { data = [], isLoading } = useApplications();
-  const { mutate: createApplication, isPending: isCreating } = useCreateApplication();
+  const { toast } = useToast();
+  const { mutate: createApplication, isPending: isCreating } =
+    useCreateApplication();
   const { mutate: deleteApplication } = useDeleteApplication();
   const confirm = useConfirm();
   const router = useRouter();
@@ -28,7 +35,10 @@ export default function Home() {
       confirmLabel: "Delete",
       variant: "danger",
     });
-    if (ok) deleteApplication(row.id!);
+
+    if (ok) {
+      deleteApplication(row.id!);
+    }
   };
 
   const columns: TableColumn<Row>[] = [
@@ -52,6 +62,19 @@ export default function Home() {
         ) : null,
     },
   ];
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      toast.error(`There was error logging you out. ${error}`);
+      return;
+    }
+
+    toast.success("Logout successfull");
+
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <>
@@ -59,6 +82,10 @@ export default function Home() {
         <Styled.AppTitle>Job Tracker</Styled.AppTitle>
         <Button variant="primary" onClick={handleAdd} isLoading={isCreating}>
           Add application
+        </Button>
+
+        <Button variant="secondary" onClick={handleLogout}>
+          Logout
         </Button>
       </Styled.Header>
       <Styled.TableWrapper>
@@ -70,7 +97,6 @@ export default function Home() {
           rowKey="id"
           stickyHeader
           onRowClick={(row) => row.id && router.push(`/applications/${row.id}`)}
-          style={{ height: "100%" }}
         />
       </Styled.TableWrapper>
     </>

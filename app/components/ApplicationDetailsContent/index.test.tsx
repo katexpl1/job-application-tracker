@@ -35,7 +35,13 @@ vi.mock("blunt-ui", () => ({
   }) => (
     <>
       <label htmlFor={name}>{label}</label>
-      <input id={name} name={name} value={value ?? ""} onChange={onChange} onBlur={onBlur} />
+      <input
+        id={name}
+        name={name}
+        value={value ?? ""}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
     </>
   ),
   Textarea: ({
@@ -53,7 +59,13 @@ vi.mock("blunt-ui", () => ({
   }) => (
     <>
       <label htmlFor={name}>{label}</label>
-      <textarea id={name} name={name} value={value ?? ""} onChange={onChange} onBlur={onBlur} />
+      <textarea
+        id={name}
+        name={name}
+        value={value ?? ""}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
     </>
   ),
   Select: ({
@@ -107,7 +119,10 @@ vi.mock("blunt-ui", () => ({
       handleBlur: vi.fn(),
       handleSubmit: vi.fn(),
       setFieldValue: (field: string, value: string) =>
-        setValues((prev: Record<string, string>) => ({ ...prev, [field]: value })),
+        setValues((prev: Record<string, string>) => ({
+          ...prev,
+          [field]: value,
+        })),
       reset: (newValues?: Record<string, string>) =>
         setValues(newValues ?? initialValues),
       isSubmitting: false,
@@ -180,6 +195,8 @@ describe("ApplicationDetailsContent", () => {
         screen.getByRole("button", { name: /^save$/i }),
       ).toBeInTheDocument();
     });
-    expect(screen.queryByRole("button", { name: /save notes/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /save notes/i }),
+    ).not.toBeInTheDocument();
   });
 });

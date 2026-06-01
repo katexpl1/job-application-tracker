@@ -19,107 +19,104 @@ import {
   useToast,
 } from "blunt-ui";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import * as Styled from "./ApplicationDetailsContent.styles";
+import { mapToApplicationFormValues, validateApplication } from "./helpers";
+import type { CombinedForm } from "./types";
 
 interface Props {
   id: string;
 }
 
-type CombinedForm = {
-  companyName: string;
-  appliedRole: string;
-  location: string;
-  jobType: string;
-  dateApplied: string;
-  source: string;
-  salaryRange: string;
-  contactName: string;
-  jobPostingUrl: string;
-  status: string;
-  comment: string;
-  notes: string;
-  pros: string;
-  cons: string;
-  rejectionReason: string;
-};
-
 export function ApplicationDetailsContent({ id }: Props) {
   const { toast } = useToast();
+  const router = useRouter();
+
   const {
     data: application,
     isLoading: appLoading,
     isError: appError,
   } = useApplication(id);
+
   const { data: details } = useApplicationDetails(id);
   const { mutate: updateApplication } = useUpdateApplication();
   const { mutate: updateDetails } = useUpdateApplicationDetails();
 
-  const { values, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting } =
-    useForm<CombinedForm>({
-      initialValues: {
-        companyName: "",
-        appliedRole: "",
-        location: "",
-        jobType: "",
-        dateApplied: "",
-        source: "",
-        salaryRange: "",
-        contactName: "",
-        jobPostingUrl: "",
-        status: "",
-        comment: "",
-        notes: "",
-        pros: "",
-        cons: "",
-        rejectionReason: "",
-      },
-      onSubmit: async (vals) => {
-        const { notes, pros, cons, rejectionReason, ...appFields } = vals;
-        try {
-          await Promise.all([
-            new Promise<void>((resolve, reject) =>
-              updateApplication({ id, body: appFields }, {
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    reset,
+    isSubmitting,
+  } = useForm<CombinedForm>({
+    validate: validateApplication,
+    onError: () => toast.error("Please verify the form fields"),
+    initialValues: {
+      companyName: "",
+      appliedRole: "",
+      location: "",
+      jobType: "",
+      dateApplied: "",
+      source: "",
+      salaryRange: "",
+      contactName: "",
+      jobPostingUrl: "",
+      status: "",
+      comment: "",
+      notes: "",
+      pros: "",
+      cons: "",
+      rejectionReason: "",
+    },
+    onSubmit: async (vals) => {
+      const { notes, pros, cons, rejectionReason, ...appFields } = vals;
+      try {
+        await Promise.all([
+          new Promise<void>((resolve, reject) =>
+            updateApplication(
+              { id, body: appFields },
+              {
                 onSuccess: () => resolve(),
                 onError: (err) => reject(err),
-              }),
+              },
             ),
-            new Promise<void>((resolve, reject) =>
-              updateDetails({ id, notes, pros, cons, rejectionReason }, {
+          ),
+          new Promise<void>((resolve, reject) =>
+            updateDetails(
+              { id, notes, pros, cons, rejectionReason },
+              {
                 onSuccess: () => resolve(),
                 onError: (err) => reject(err),
-              }),
+              },
             ),
-          ]);
-          toast.success("Saved!");
-        } catch (err) {
-          toast.error(`Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`);
-          throw err;
-        }
-      },
-    });
+          ),
+        ]);
+        toast.success("Saved!");
+      } catch (err) {
+        toast.error(
+          `Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`,
+        );
+        throw err;
+      }
+    },
+  });
 
   useEffect(() => {
-    if (!application) return;
-    setFieldValue("companyName", application.companyName ?? "");
-    setFieldValue("appliedRole", application.appliedRole ?? "");
-    setFieldValue("location", application.location ?? "");
-    setFieldValue("jobType", application.jobType ?? "");
-    setFieldValue("dateApplied", application.dateApplied ?? "");
-    setFieldValue("source", application.source ?? "");
-    setFieldValue("salaryRange", application.salaryRange ?? "");
-    setFieldValue("contactName", application.contactName ?? "");
-    setFieldValue("jobPostingUrl", application.jobPostingUrl ?? "");
-    setFieldValue("status", application.status ?? "");
-    setFieldValue("comment", application.comment ?? "");
-  }, [application]);
+    if (!application) {
+      return;
+    }
+
+    reset(mapToApplicationFormValues(application, details));
+  }, [application, details, reset]);
 
   useEffect(() => {
-    if (!details) return;
-    setFieldValue("notes", details.notes ?? "");
-    setFieldValue("pros", details.pros ?? "");
-    setFieldValue("cons", details.cons ?? "");
-    setFieldValue("rejectionReason", details.rejectionReason ?? "");
-  }, [details]);
+    if (appError) {
+      router.replace("/");
+    }
+  }, [appError, router]);
 
   if (appLoading) {
     return (
@@ -127,10 +124,6 @@ export function ApplicationDetailsContent({ id }: Props) {
         <Spinner />
       </Styled.LoadingWrapper>
     );
-  }
-
-  if (appError || !application) {
-    return <Styled.ErrorState>Failed to load application.</Styled.ErrorState>;
   }
 
   return (
@@ -143,6 +136,7 @@ export function ApplicationDetailsContent({ id }: Props) {
             value={values.companyName}
             onChange={handleChange}
             onBlur={handleBlur}
+            error={touched.companyName && errors.companyName}
           />
           <Input
             name="appliedRole"
@@ -150,6 +144,7 @@ export function ApplicationDetailsContent({ id }: Props) {
             value={values.appliedRole}
             onChange={handleChange}
             onBlur={handleBlur}
+            error={touched.appliedRole && errors.appliedRole}
           />
           <Input
             name="location"
@@ -201,6 +196,7 @@ export function ApplicationDetailsContent({ id }: Props) {
             value={values.jobPostingUrl}
             onChange={handleChange}
             onBlur={handleBlur}
+            error={touched.jobPostingUrl && errors.jobPostingUrl}
           />
           <FormField label="Status">
             <Select

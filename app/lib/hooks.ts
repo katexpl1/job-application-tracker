@@ -10,11 +10,17 @@ import type {
   IUpdateApplicationRequest,
 } from "./models/requests";
 
+class ApiError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+  }
+}
+
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options);
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error ?? `Request failed with status ${res.status}`);
+    throw new ApiError(body.error ?? `Request failed with status ${res.status}`, res.status);
   }
   return res.json();
 }

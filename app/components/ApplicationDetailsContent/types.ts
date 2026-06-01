@@ -1,6 +1,4 @@
-export interface IApplication {
-  id: string;
-  userId: string;
+export type CombinedForm = {
   companyName: string;
   appliedRole: string;
   location: string;
@@ -12,15 +10,8 @@ export interface IApplication {
   jobPostingUrl: string;
   status: string;
   comment: string;
-}
-
-export interface IApplicationDetails {
-  applicationId: string;
   notes: string;
   pros: string;
   cons: string;
   rejectionReason: string;
-  createdAt: string;
-}
-
-export type Row = Omit<IApplication, "id"> & { id?: string; details?: never };
+};

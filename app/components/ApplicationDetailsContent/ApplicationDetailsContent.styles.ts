@@ -28,8 +28,3 @@ export const LoadingWrapper = styled.div`
   align-items: center;
   padding: 48px;
 `;
-
-export const ErrorState = styled.p`
-  color: #c0392b;
-  font-size: 0.875rem;
-`;

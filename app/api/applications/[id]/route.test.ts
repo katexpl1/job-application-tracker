@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE, GET, PUT } from "./route";
@@ -38,7 +37,10 @@ describe("GET /api/applications/[id]", () => {
   });
 
   it("returns 404 on database error", async () => {
-    mockChain.single.mockResolvedValue({ data: null, error: { message: "Not found" } });
+    mockChain.single.mockResolvedValue({
+      data: null,
+      error: { message: "Not found" },
+    });
     const req = new NextRequest("http://localhost/api/applications/1");
     const res = await GET(req, { params });
     expect(res.status).toBe(404);

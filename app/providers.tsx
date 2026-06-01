@@ -9,11 +9,27 @@ import {
   createNeoBrutalTheme,
 } from "blunt-ui";
 import { useState } from "react";
+import { HttpStatus } from "./api/utils";
 
 const theme = createNeoBrutalTheme("#4f46e5");
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: (_, error) =>
+              !(
+                error instanceof Error &&
+                "status" in error &&
+                (error as { status: number }).status <
+                  HttpStatus.InternalServerError
+              ),
+          },
+        },
+      }),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

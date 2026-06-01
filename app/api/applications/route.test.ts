@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET, POST } from "./route";
@@ -35,7 +34,10 @@ describe("GET /api/applications", () => {
   });
 
   it("returns 500 on database error", async () => {
-    mockChain.order.mockResolvedValue({ data: null, error: { message: "DB error" } });
+    mockChain.order.mockResolvedValue({
+      data: null,
+      error: { message: "DB error" },
+    });
     const res = await GET();
     expect(res.status).toBe(500);
   });
