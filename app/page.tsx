@@ -89,6 +89,7 @@ export default function Home() {
           emptyMessage="No applications yet"
           rowKey="id"
           stickyHeader
+          pageSize={10}
           onRowClick={(row) => row.id && router.push(`/applications/${row.id}`)}
         />
       </Styled.TableWrapper>

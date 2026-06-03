@@ -22,6 +22,7 @@ export const AppTitle = styled.h1`
 
 export const TableWrapper = styled.div`
   height: calc(100vh - 56px);
+  overflow: auto;
   padding: 32px;
 `;
 

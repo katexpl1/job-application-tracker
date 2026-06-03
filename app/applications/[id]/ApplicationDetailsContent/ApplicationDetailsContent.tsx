@@ -210,25 +210,9 @@ export function ApplicationDetailsContent({ id }: IProps) {
               onChange={handleChange}
             />
           </FormField>
-          <Styled.FullWidth>
-            <Textarea
-              name="comment"
-              label="Comment"
-              value={values.comment}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-          </Styled.FullWidth>
         </Styled.FormGrid>
 
         <Styled.InputsContainer>
-          <Textarea
-            name="notes"
-            label="Notes"
-            value={values.notes}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
           <Textarea
             name="pros"
             label="Pros"

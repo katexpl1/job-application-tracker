@@ -1,5 +1,13 @@
-import { Button, TableColumn } from "blunt-ui";
+import { Badge, BadgeVariants, Button, TableColumn } from "blunt-ui";
 import { Row } from "./lib/models";
+
+const STATUS_VARIANTS: Record<string, BadgeVariants> = {
+  Applied: "info",
+  "In review": "warning",
+  Interview: "primary",
+  Offer: "success",
+  Rejected: "error",
+};
 
 export function getColumns(
   onDelete: (e: React.MouseEvent, row: Row) => void,
@@ -8,11 +16,33 @@ export function getColumns(
     { key: "companyName", header: "Company name", width: "150px" },
     { key: "appliedRole", header: "Applied role", width: "160px" },
     { key: "location", header: "Location", width: "120px" },
-    { key: "jobType", header: "Job type", width: "110px" },
+    {
+      key: "jobType",
+      header: "Job type",
+      width: "110px",
+      render: (value) =>
+        value ? String(value).charAt(0).toUpperCase() + String(value).slice(1) : null,
+    },
     { key: "dateApplied", header: "Date applied", width: "120px" },
-    { key: "source", header: "Source", width: "130px" },
+    {
+      key: "source",
+      header: "Source",
+      width: "130px",
+      render: (value) =>
+        value ? String(value).charAt(0).toUpperCase() + String(value).slice(1) : null,
+    },
     { key: "salaryRange", header: "Salary range", width: "170px" },
-    { key: "status", header: "Status", width: "110px" },
+    {
+      key: "status",
+      header: "Status",
+      width: "110px",
+      render: (value) =>
+        value ? (
+          <Badge variant={STATUS_VARIANTS[String(value)] ?? "neutral"}>
+            {String(value)}
+          </Badge>
+        ) : null,
+    },
     {
       key: "id",
       header: "",

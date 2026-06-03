@@ -10,7 +10,8 @@
     "format": "eslint --fix app",
     "tsc": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed": "node scripts/seed.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
