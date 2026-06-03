@@ -36,7 +36,6 @@ describe("mapToApplicationFormValues", () => {
     expect(form.companyName).toBe("Test Corp");
     expect(form.appliedRole).toBe("Frontend Developer");
     expect(form.contactName).toBe("John Doe");
-    expect(form.notes).toBe("Follow up in 2 weeks");
     expect(form.pros).toBe("Good pay");
   });
 
@@ -56,8 +55,6 @@ describe("mapToApplicationFormValues", () => {
 
     expect(form.contactName).toBe("");
     expect(form.jobPostingUrl).toBe("");
-    expect(form.comment).toBe("");
-    expect(form.notes).toBe("");
     expect(form.pros).toBe("");
     expect(form.cons).toBe("");
     expect(form.rejectionReason).toBe("");

@@ -58,13 +58,11 @@ export function ApplicationDetailsContent({ id }: IProps) {
 
   const handleFormSubmit = async (vals: ApplicationForm) => {
     const {
-      notes,
       pros,
       cons,
       rejectionReason,
       contactName,
       jobPostingUrl,
-      comment,
       ...appFields
     } = vals;
     try {
@@ -74,15 +72,13 @@ export function ApplicationDetailsContent({ id }: IProps) {
           id,
           contactName,
           jobPostingUrl,
-          comment,
-          notes,
           pros,
           cons,
           rejectionReason,
           coverLetter,
         }),
       ]);
-      toast.success("Saved!");
+      toast.success("Application saved!");
     } catch (err) {
       toast.error(
         `Failed to save: ${err instanceof Error ? err.message : "Unknown error"}`,

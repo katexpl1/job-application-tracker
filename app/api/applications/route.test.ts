@@ -32,9 +32,12 @@ beforeEach(() => {
   mockChain.single.mockResolvedValue({ data: mockApplication, error: null });
 });
 
+const makeGetRequest = (params = "") =>
+  new NextRequest(`http://localhost/api/applications${params}`);
+
 describe("GET /api/applications", () => {
   it("returns list of applications", async () => {
-    const res = await GET();
+    const res = await GET(makeGetRequest());
     expect(res.status).toBe(HttpStatus.OK);
     const body = await res.json();
     expect(body).toEqual([mockApplication]);
@@ -42,7 +45,7 @@ describe("GET /api/applications", () => {
 
   it("returns 500 on database error", async () => {
     mockChain.order.mockResolvedValue({ data: null, error: { message: "DB error" } });
-    const res = await GET();
+    const res = await GET(makeGetRequest());
     expect(res.status).toBe(HttpStatus.InternalServerError);
   });
 });

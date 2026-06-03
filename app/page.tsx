@@ -1,32 +1,30 @@
 "use client";
 
-import { Button, Table, useConfirm, useToast } from "blunt-ui";
+import { Button, Table, useConfirm, useTable, useToast } from "blunt-ui";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   useApplications,
-  useCreateApplication,
   useDeleteApplication,
 } from "./lib/hooks";
 import { Row } from "./lib/models";
 import { getColumns } from "./page.helpers";
 import * as Styled from "./page.styles";
 import { supabase } from "./lib/supabase";
+import { AddApplicationModal } from "./AddApplicationModal";
 
 export default function Home() {
   const { toast } = useToast();
   const confirm = useConfirm();
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { sort, onSortChange } = useTable();
 
-  const { data = [], isLoading } = useApplications();
-  const { mutate: createApplication, isPending: isCreating } =
-    useCreateApplication();
-  const { mutate: deleteApplication } = useDeleteApplication();
+  const { data = [], isLoading } = useApplications(sort);
+  const { mutate: deleteApplication, isPending: isDeleting } = useDeleteApplication();
 
   const handleAddApplication = () => {
-    createApplication(
-      { companyName: "New application", appliedRole: "Role" },
-      { onSuccess: (created) => router.push(`/applications/${created.id}`) },
-    );
+    setIsModalOpen(true);
   };
 
   const handleDeleteApplication = async (e: React.MouseEvent, row: Row) => {
@@ -66,7 +64,6 @@ export default function Home() {
           <Button
             variant="primary"
             onClick={handleAddApplication}
-            isLoading={isCreating}
           >
             Add application
           </Button>
@@ -85,14 +82,17 @@ export default function Home() {
         <Table
           columns={columns}
           data={data as Row[]}
-          loading={isLoading}
+          loading={isLoading || isDeleting}
           emptyMessage="No applications yet"
           rowKey="id"
           stickyHeader
           pageSize={10}
+          sort={sort}
+          onSortChange={onSortChange}
           onRowClick={(row) => row.id && router.push(`/applications/${row.id}`)}
         />
       </Styled.TableWrapper>
+      <AddApplicationModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }

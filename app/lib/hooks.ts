@@ -47,10 +47,11 @@ export function useApplication(id: string) {
   });
 }
 
-export function useApplications() {
+export function useApplications(sort?: { key: string; direction: "asc" | "desc" } | null) {
+  const params = sort ? `?sortKey=${sort.key}&sortDir=${sort.direction}` : "";
   return useQuery<IApplicationsResponse>({
-    queryKey: QUERY_KEY,
-    queryFn: () => fetchJson<IApplicationsResponse>("/api/applications"),
+    queryKey: [...QUERY_KEY, sort],
+    queryFn: () => fetchJson<IApplicationsResponse>(`/api/applications${params}`),
   });
 }
 

@@ -2,7 +2,7 @@ import type { IApplicationDetailsResponse } from "@/app/lib/models/responses";
 
 type FormFields = Omit<
   IApplicationDetailsResponse,
-  "id" | "userId" | "applicationId" | "createdAt" | "coverLetter"
+  "id" | "userId" | "applicationId" | "createdAt" | "coverLetter" | "notes" | "comment"
 >;
 
 export const EMPTY_APPLICATION_FORM = {
@@ -16,8 +16,6 @@ export const EMPTY_APPLICATION_FORM = {
   status: "",
   contactName: "",
   jobPostingUrl: "",
-  comment: "",
-  notes: "",
   pros: "",
   cons: "",
   rejectionReason: "",

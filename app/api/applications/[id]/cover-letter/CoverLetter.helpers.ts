@@ -19,7 +19,6 @@ export function buildCoverLetterPrompt(
   Contact name: ${details?.contactName || "not specified"}
   Job type: ${application.jobType || "not specified"}
   ${details?.jobPostingUrl ? `Job posting: ${details.jobPostingUrl}` : ""}
-  ${details?.notes ? `Additional notes: ${details.notes}` : ""}
   ${details?.pros ? `What appeals to me about this role: ${details.pros}` : ""}
 
   Write a compelling, professional cover letter in first person. It should:

@@ -15,8 +15,6 @@ export function mapToApplicationFormValues(
     status: data.status ?? "",
     contactName: data.contactName ?? "",
     jobPostingUrl: data.jobPostingUrl ?? "",
-    comment: data.comment ?? "",
-    notes: data.notes ?? "",
     pros: data.pros ?? "",
     cons: data.cons ?? "",
     rejectionReason: data.rejectionReason ?? "",
@@ -37,7 +35,10 @@ export function validateApplication(
 
   if (vals.jobPostingUrl) {
     try {
-      new URL(vals.jobPostingUrl);
+      const url = vals.jobPostingUrl.match(/^https?:\/\//)
+        ? vals.jobPostingUrl
+        : `https://${vals.jobPostingUrl}`;
+      new URL(url);
     } catch {
       errs.jobPostingUrl = "Must be a valid URL";
     }
