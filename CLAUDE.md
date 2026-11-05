@@ -191,4 +191,13 @@ After making changes, run:
 npm run tsc     # zero errors required
 npm test        # all tests must pass
 npm run format  # eslint --fix (lints the whole project, incl. proxy.ts)
+npm run build   # catches prerender/SSR errors that tsc and tests miss
 ```
+
+`npm run build` is important: it runs the same static prerendering Vercel does.
+A page can pass `tsc` and tests but still fail the build - e.g. a Server Component
+that renders a styled-component. styled-components reads the theme from a client
+`ThemeProvider` (React context), and Server Components cannot read client context.
+If a route has no dynamic data (no `authenticateUser()`/cookies) it gets statically
+prerendered at build time, where the theme is unavailable and the build crashes.
+Fix by fetching data on the server (which makes the route dynamic), like the other pages do.

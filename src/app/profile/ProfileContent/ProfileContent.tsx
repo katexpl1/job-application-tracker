@@ -14,10 +14,15 @@ import { useEffect } from "react";
 import { mapProfileToFormValues } from "./ProfileContent.helpers";
 import * as Styled from "./ProfileContent.styles";
 import { EMPTY_PROFILE_FORM, ProfileForm } from "./ProfileContent.types";
+import type { IProfile } from "@/lib/models";
 
-export function ProfileContent() {
+interface IProps {
+  initialData?: IProfile;
+}
+
+export function ProfileContent({ initialData }: IProps) {
   const { toast } = useToast();
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading } = useProfile(initialData);
   const { mutateAsync: updateProfile } = useUpdateProfile();
 
   const handleFormSubmit = async (vals: ProfileForm) => {

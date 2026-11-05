@@ -100,10 +100,11 @@ export function useUpdateApplicationDetails() {
   });
 }
 
-export function useProfile() {
+export function useProfile(initialData?: IProfile) {
   return useQuery<IProfile>({
     queryKey: ["profile"],
     queryFn: () => fetchJson<IProfile>("/api/profile"),
+    initialData,
   });
 }
 
