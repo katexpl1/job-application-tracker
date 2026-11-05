@@ -62,7 +62,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <Button type="submit" isLoading={isLoading}>
+          <Button type="submit" isLoading={isLoading} disabled={isLoading}>
             Log in
           </Button>
           <Button
@@ -70,6 +70,7 @@ const Login = () => {
             variant="secondary"
             onClick={handleDemoLogin}
             isLoading={isLoading}
+            disabled={isLoading}
           >
             Try demo
           </Button>
