@@ -5,7 +5,6 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Load .env manually
 const envPath = resolve(__dirname, "../.env");
 const envVars = Object.fromEntries(
   readFileSync(envPath, "utf-8")

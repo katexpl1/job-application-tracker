@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
     rules: {
       curly: ["error", "all"],
       "@typescript-eslint/no-unused-vars": ["warn", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
     },
   },
   globalIgnores([

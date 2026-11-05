@@ -1,1 +1,0 @@
-export { ApplicationDetailsContent } from "./ApplicationDetailsContent";
