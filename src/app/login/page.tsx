@@ -19,9 +19,9 @@ const Login = () => {
       email,
       password: pass,
     });
-    setIsLoading(false);
     if (error) {
       toast.error(`Login action failed. ${error.message}`);
+      setIsLoading(false);
     } else {
       router.push("/");
       router.refresh();

@@ -20,6 +20,7 @@ export function ApplicationsList({ initialData }: IProps) {
   const confirm = useConfirm();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { sort, onSortChange } = useTable();
 
   const { data = initialData, isLoading } = useApplications(sort, initialData);
@@ -42,12 +43,14 @@ export function ApplicationsList({ initialData }: IProps) {
   const columns = getColumns(handleDeleteApplication);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
       await logout();
     } catch (error) {
       toast.error(
         `There was error logging you out. ${error instanceof Error ? error.message : ""}`,
       );
+      setIsLoggingOut(false);
       return;
     }
 
@@ -67,10 +70,10 @@ export function ApplicationsList({ initialData }: IProps) {
         </Styled.ButtonWithTitleWrapper>
 
         <Styled.ButtonsWrapper>
-          <Button variant="secondary" onClick={() => router.push("/profile")}>
+          <Button variant="secondary" onClick={() => router.push("/profile")} disabled={isLoggingOut}>
             Profile
           </Button>
-          <Styled.LogoutButton onClick={handleLogout}>
+          <Styled.LogoutButton onClick={handleLogout} isLoading={isLoggingOut} disabled={isLoggingOut}>
             Logout
           </Styled.LogoutButton>
         </Styled.ButtonsWrapper>
