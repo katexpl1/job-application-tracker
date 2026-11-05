@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     .select("*")
     .eq("userId", user.id)
     .order(
-      sortKey && SORTABLE_COLUMNS.has(sortKey) ? sortKey : "created_at",
+      sortKey && SORTABLE_COLUMNS.has(sortKey) ? sortKey : "createdAt",
       { ascending: sortKey ? ascending : false },
     );
 

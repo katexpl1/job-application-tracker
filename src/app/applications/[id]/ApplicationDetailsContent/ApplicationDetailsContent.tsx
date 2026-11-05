@@ -13,6 +13,7 @@ import {
 } from "@/lib/applications/applications.consts";
 import {
   Button,
+  DatePicker,
   Form,
   FormField,
   Input,
@@ -96,6 +97,7 @@ export function ApplicationDetailsContent({ id, initialData }: IProps) {
     handleChange,
     handleBlur,
     handleSubmit,
+    setFieldValue,
     reset,
     isSubmitting,
   } = useForm<ApplicationForm>({
@@ -163,12 +165,11 @@ export function ApplicationDetailsContent({ id, initialData }: IProps) {
               onChange={handleChange}
             />
           </FormField>
-          <Input
+          <DatePicker
             name="dateApplied"
             label="Date applied"
             value={values.dateApplied}
-            onChange={handleChange}
-            onBlur={handleBlur}
+            onChange={(_, value) => setFieldValue("dateApplied", value)}
           />
           <FormField label="Source">
             <Select

@@ -50,6 +50,27 @@ vi.mock("blunt-ui", () => ({
       />
     </>
   ),
+  DatePicker: ({
+    label,
+    name,
+    value,
+    onChange,
+  }: {
+    label?: string;
+    name?: string;
+    value?: string;
+    onChange?: (name: string, value: string) => void;
+  }) => (
+    <>
+      {label && <label htmlFor={name}>{label}</label>}
+      <input
+        id={name}
+        name={name}
+        value={value ?? ""}
+        onChange={(e) => onChange?.(name ?? "", e.target.value)}
+      />
+    </>
+  ),
   Textarea: ({
     label,
     name,

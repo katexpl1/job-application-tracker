@@ -45,9 +45,3 @@ export const ButtonWithTitleWrapper = styled.div`
   gap: 30px;
   align-items: center;
 `;
-
-export const CenteredTableWrapper = styled(TableWrapper)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;

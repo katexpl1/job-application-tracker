@@ -4,7 +4,7 @@ import { ApplicationSource, ApplicationStatus, JobType } from "./applications.co
 
 type FormFields = Omit<
   IApplicationDetailsResponse,
-  "id" | "userId" | "applicationId" | "createdAt" | "created_at" | "coverLetter" | "notes" | "comment"
+  "id" | "userId" | "applicationId" | "createdAt" | "coverLetter" | "notes" | "comment"
 >;
 
 export const EMPTY_APPLICATION_FORM = {

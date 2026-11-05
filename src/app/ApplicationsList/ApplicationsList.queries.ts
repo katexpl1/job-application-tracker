@@ -10,7 +10,7 @@ export async function getApplications(
     .from("applications")
     .select("*")
     .eq("userId", userId)
-    .order("created_at", { ascending: false });
+    .order("createdAt", { ascending: false });
 
   return (data ?? []).map(toApplicationModel);
 }

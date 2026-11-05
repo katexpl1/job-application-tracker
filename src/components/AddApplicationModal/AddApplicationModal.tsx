@@ -2,6 +2,7 @@
 
 import {
   Button,
+  DatePicker,
   Form,
   FormField,
   Input,
@@ -43,8 +44,17 @@ export function AddApplicationModal({ open, onClose }: IProps) {
   const [coverLetter, setCoverLetter] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, reset } =
-    useForm<ApplicationForm>({
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    setFieldValue,
+    isSubmitting,
+    reset,
+  } = useForm<ApplicationForm>({
       initialValues: INITIAL,
       validate: validateApplication,
       onError: () => toast.error("Please verify the form fields"),
@@ -141,12 +151,11 @@ export function AddApplicationModal({ open, onClose }: IProps) {
               onChange={handleChange}
             />
           </FormField>
-          <Input
+          <DatePicker
             name="dateApplied"
             label="Date applied"
             value={values.dateApplied}
-            onChange={handleChange}
-            onBlur={handleBlur}
+            onChange={(_, value) => setFieldValue("dateApplied", value)}
           />
           <FormField label="Source">
             <Select
