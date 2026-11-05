@@ -154,7 +154,11 @@ Dane fetchowane na serwerze przekazywane są jako `initialData` do React Query w
 
 ## Proxy (middleware)
 
-`proxy.ts` (w Next.js 16 zastępuje `middleware.ts`) chroni wszystkie strony automatycznie — sprawdza sesję przed każdym requestem i redirectuje na `/login` jeśli użytkownik nie jest zalogowany. Dzięki temu `page.tsx` nie musi tego robić ręcznie.
+`src/proxy.ts` (w Next.js 16 zastępuje `middleware.ts`) chroni wszystkie strony automatycznie — sprawdza sesję przed każdym requestem i redirectuje na `/login` jeśli użytkownik nie jest zalogowany. Dzięki temu `page.tsx` nie musi tego robić ręcznie.
+
+**Lokalizacja jest krytyczna:** przy katalogu `src/` plik proxy MUSI być w `src/proxy.ts` (obok `src/app`), nie w root projektu. W root Next.js go nie wykryje — proxy nie zadziała, niezalogowani użytkownicy dojdą do server componentów i `user!.id` się wywali. Build pokazuje `ƒ Proxy (Middleware)` gdy proxy jest poprawnie wykrywany.
+
+Mimo proxy, strony serwerowe i tak robią defensywnie `if (!user) { redirect("/login"); }` — na wypadek gdyby proxy miało edge case. Nie polegaj wyłącznie na proxy do ochrony przed `null` userem.
 
 Przy redirectcie proxy musi przekazać odświeżone cookies sesji do nowej odpowiedzi — inaczej sesja może zostać utracona.
 

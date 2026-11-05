@@ -35,8 +35,11 @@ src/
   lib/                        shared hooks, models, auth, Supabase clients
     applications/             domain types, enums, validators
     models/                   API types + generated Supabase types
-proxy.ts                      redirects you to /login if you're not signed in
+  proxy.ts                    redirects you to /login if you're not signed in
 ```
+
+`proxy.ts` lives inside `src/` (next to `app/`) - that's where Next.js looks for it
+when the project uses a `src/` directory. Putting it at the project root does nothing.
 
 The home page and the detail page fetch their data on the server and pass it down, so you see content right away instead of a loading spinner. React Query takes over on the client after that (for sorting, deleting, saving). Creating and deleting go through server actions.
 
