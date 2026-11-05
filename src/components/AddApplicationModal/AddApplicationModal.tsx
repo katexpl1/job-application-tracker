@@ -13,7 +13,7 @@ import {
   useToast,
 } from "blunt-ui";
 import { useCallback, useState } from "react";
-import { createApplication } from "./AddApplicationModal.actions";
+import { useCreateApplication } from "@/lib/hooks";
 import {
   ApplicationStatus,
   JOB_TYPE_OPTIONS,
@@ -43,6 +43,7 @@ export function AddApplicationModal({ open, onClose }: IProps) {
   const { toast } = useToast();
   const [coverLetter, setCoverLetter] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const { mutate: createApp, isPending } = useCreateApplication();
 
   const {
     values,
@@ -52,16 +53,24 @@ export function AddApplicationModal({ open, onClose }: IProps) {
     handleBlur,
     handleSubmit,
     setFieldValue,
-    isSubmitting,
     reset,
   } = useForm<ApplicationForm>({
       initialValues: INITIAL,
       validate: validateApplication,
       onError: () => toast.error("Please verify the form fields"),
       onSubmit: async (vals) => {
-        await createApplication(vals, coverLetter);
-        toast.success("New application added!");
-        handleClose();
+        createApp(
+          { form: vals, coverLetter },
+          {
+            onSuccess: () => {
+              toast.success("New application added!");
+              handleClose();
+            },
+            onError: (error) => {
+              toast.error(`Failed to create application: ${error.message}`);
+            },
+          },
+        );
       },
     });
 
@@ -108,10 +117,10 @@ export function AddApplicationModal({ open, onClose }: IProps) {
       size="lg"
       footer={
         <>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose} disabled={isPending}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit} isLoading={isSubmitting}>
+          <Button variant="primary" onClick={handleSubmit} isLoading={isPending} disabled={isPending}>
             Save
           </Button>
         </>

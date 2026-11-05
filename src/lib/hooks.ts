@@ -9,11 +9,13 @@ import type {
 import type {
   IApplicationDetailsModel,
   IApplicationModel,
+  ApplicationForm,
 } from "@/lib/applications/applications.types";
 import {
   toApplicationDetailsModel,
   toApplicationModel,
 } from "@/lib/applications/applications.helpers";
+import { createApplication } from "@/components/AddApplicationModal/AddApplicationModal.actions";
 
 class ApiError extends Error {
   constructor(
@@ -65,6 +67,14 @@ export function useApplications(
         items.map(toApplicationModel),
       ),
     initialData: sort ? undefined : initialData,
+  });
+}
+
+export function useCreateApplication() {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, { form: ApplicationForm; coverLetter: string }>({
+    mutationFn: ({ form, coverLetter }) => createApplication(form, coverLetter),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 }
 
