@@ -58,15 +58,37 @@ export function useApplication(id: string, initialData?: IApplicationDetailsMode
 export function useApplications(
   sort?: { key: string; direction: "asc" | "desc" } | null,
   initialData?: IApplicationModel[],
+  page?: number,
+  pageSize?: number,
 ) {
-  const params = sort ? `?sortKey=${sort.key}&sortDir=${sort.direction}` : "";
-  return useQuery<IApplicationModel[]>({
-    queryKey: [...QUERY_KEY, sort],
+  const params = new URLSearchParams();
+  if (sort) {
+    params.append("sortKey", sort.key);
+    params.append("sortDir", sort.direction);
+  }
+  if (page !== undefined) {
+    params.append("page", String(page));
+  }
+  if (pageSize !== undefined) {
+    params.append("pageSize", String(pageSize));
+  }
+
+  const queryString = params.toString();
+  const url = `/api/applications${queryString ? `?${queryString}` : ""}`;
+
+  return useQuery<{ data: IApplicationModel[]; total: number }>({
+    queryKey: [...QUERY_KEY, sort, page, pageSize],
     queryFn: () =>
-      fetchJson<IApplicationDetailsResponse[]>(`/api/applications${params}`).then((items) =>
-        items.map(toApplicationModel),
+      fetchJson<{ data: IApplicationDetailsResponse[]; total: number }>(url).then(
+        (response) => ({
+          data: response.data.map(toApplicationModel),
+          total: response.total,
+        }),
       ),
-    initialData: sort ? undefined : initialData,
+    initialData:
+      !sort && page === 1 && initialData
+        ? { data: initialData, total: initialData.length }
+        : undefined,
   });
 }
 

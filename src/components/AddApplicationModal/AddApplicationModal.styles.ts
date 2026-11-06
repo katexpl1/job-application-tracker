@@ -1,9 +1,14 @@
 import styled from "styled-components";
+import { media } from "@/lib/media";
 
 export const FormGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px 24px;
+
+  ${media.mobile} {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const InputsContainer = styled.div`

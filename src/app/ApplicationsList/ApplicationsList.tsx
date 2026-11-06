@@ -10,6 +10,7 @@ import * as Styled from "../page.styles";
 import { logout } from "./ApplicationsList.actions";
 import { AddApplicationModal } from "@/components/AddApplicationModal/AddApplicationModal";
 import type { IApplicationModel } from "@/lib/applications/applications.types";
+import { PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SIZE } from "./ApplicationsList.consts";
 
 interface IProps {
   initialData: IApplicationModel[];
@@ -21,10 +22,19 @@ export function ApplicationsList({ initialData }: IProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { sort, onSortChange } = useTable();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const { sort, page, onSortChange, onPageChange } = useTable();
 
-  const { data = initialData, isLoading } = useApplications(sort, initialData);
+  const { data: response, isLoading } = useApplications(sort, initialData, page, pageSize);
+  const data = response?.data ?? initialData;
+  const totalRows = response?.total ?? initialData.length;
   const { mutate: deleteApplication, isPending: isDeleting } = useDeleteApplication();
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    onPageChange(1);
+  };
 
   const handleDeleteApplication = async (e: React.MouseEvent, row: Row) => {
     e.stopPropagation();
@@ -59,6 +69,11 @@ export function ApplicationsList({ initialData }: IProps) {
     router.refresh();
   };
 
+  const handleMobileAction = (action: () => void) => {
+    setIsMobileMenuOpen(false);
+    action();
+  };
+
   return (
     <>
       <Styled.Header>
@@ -77,21 +92,49 @@ export function ApplicationsList({ initialData }: IProps) {
             Logout
           </Styled.LogoutButton>
         </Styled.ButtonsWrapper>
+
+        <Styled.HamburgerButton
+          $open={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen((open) => !open)}
+          aria-label="Toggle menu"
+        >
+          <span />
+          <span />
+          <span />
+        </Styled.HamburgerButton>
       </Styled.Header>
 
+      <Styled.MobileMenu $open={isMobileMenuOpen}>
+        <Button variant="secondary" onClick={() => handleMobileAction(() => router.push("/profile"))} disabled={isLoggingOut}>
+          Profile
+        </Button>
+        <Styled.LogoutButton onClick={() => handleMobileAction(handleLogout)} isLoading={isLoggingOut} disabled={isLoggingOut}>
+          Logout
+        </Styled.LogoutButton>
+      </Styled.MobileMenu>
+
       <Styled.TableWrapper>
-        <Table
-          columns={columns}
-          data={data as Row[]}
-          loading={isLoading || isDeleting}
-          emptyMessage="No applications yet"
-          rowKey="id"
-          stickyHeader
-          pageSize={10}
-          sort={sort}
-          onSortChange={onSortChange}
-          onRowClick={(row) => row.id && router.push(`/applications/${row.id}`)}
-        />
+        <Styled.TableHeightContainer>
+          <Table
+            columns={columns}
+            data={data as Row[]}
+            loading={isLoading || isDeleting}
+            emptyMessage="No applications yet"
+            rowKey="id"
+            stickyHeader
+            stickyPagination
+            pageSize={pageSize}
+            page={page}
+            totalRows={totalRows}
+            onPageChange={onPageChange}
+            pageSizeOptions={PAGE_SIZE_OPTIONS}
+            onPageSizeChange={handlePageSizeChange}
+            sort={sort}
+            onSortChange={onSortChange}
+            onRowClick={(row) => row.id && router.push(`/applications/${row.id}`)}
+            style={{ height: "100%" }}
+          />
+        </Styled.TableHeightContainer>
       </Styled.TableWrapper>
 
       <AddApplicationModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />

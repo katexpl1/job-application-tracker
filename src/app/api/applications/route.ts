@@ -19,22 +19,29 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const sortKey = searchParams.get("sortKey");
   const sortDir = searchParams.get("sortDir");
-  const ascending = sortDir === "asc";
+  const pageParam = searchParams.get("page");
+  const pageSizeParam = searchParams.get("pageSize");
 
-  const { data, error } = await supabase
+  const ascending = sortDir === "asc";
+  const page = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
+  const pageSize = pageSizeParam ? Math.max(1, parseInt(pageSizeParam, 10)) : 10;
+  const offset = (page - 1) * pageSize;
+
+  const { data, error, count } = await supabase
     .from("applications")
-    .select("*")
+    .select("*", { count: "exact" })
     .eq("userId", user.id)
     .order(
       sortKey && SORTABLE_COLUMNS.has(sortKey) ? sortKey : "createdAt",
       { ascending: sortKey ? ascending : false },
-    );
+    )
+    .range(offset, offset + pageSize - 1);
 
   if (error) {
     return errorResponse(error.message, HttpStatus.InternalServerError);
   }
 
-  return Response.json(data as IApplicationRecord[]);
+  return Response.json({ data: data as IApplicationRecord[], total: count ?? 0 });
 }
 
 export async function POST(request: NextRequest) {

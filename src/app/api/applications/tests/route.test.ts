@@ -12,7 +12,8 @@ const mockApplication = {
 const mockChain = {
   select: vi.fn().mockReturnThis(),
   eq: vi.fn().mockReturnThis(),
-  order: vi.fn().mockResolvedValue({ data: [mockApplication], error: null }),
+  order: vi.fn().mockReturnThis(),
+  range: vi.fn().mockResolvedValue({ data: [mockApplication], error: null, count: 1 }),
   insert: vi.fn().mockReturnThis(),
   single: vi.fn().mockResolvedValue({ data: mockApplication, error: null }),
 };
@@ -28,7 +29,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockChain.select.mockReturnThis();
   mockChain.eq.mockReturnThis();
-  mockChain.order.mockResolvedValue({ data: [mockApplication], error: null });
+  mockChain.order.mockReturnThis();
+  mockChain.range.mockResolvedValue({ data: [mockApplication], error: null, count: 1 });
   mockChain.single.mockResolvedValue({ data: mockApplication, error: null });
 });
 
@@ -36,15 +38,15 @@ const makeGetRequest = (params = "") =>
   new NextRequest(`http://localhost/api/applications${params}`);
 
 describe("GET /api/applications", () => {
-  it("returns list of applications", async () => {
+  it("returns list of applications with total count", async () => {
     const res = await GET(makeGetRequest());
     expect(res.status).toBe(HttpStatus.OK);
     const body = await res.json();
-    expect(body).toEqual([mockApplication]);
+    expect(body).toEqual({ data: [mockApplication], total: 1 });
   });
 
   it("returns 500 on database error", async () => {
-    mockChain.order.mockResolvedValue({ data: null, error: { message: "DB error" } });
+    mockChain.range.mockResolvedValue({ data: null, error: { message: "DB error" }, count: null });
     const res = await GET(makeGetRequest());
     expect(res.status).toBe(HttpStatus.InternalServerError);
   });
